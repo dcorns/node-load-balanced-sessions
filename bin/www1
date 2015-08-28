@@ -18,9 +18,15 @@ app.set('port', port);
 /**
  * Create HTTP server.
  */
-
+var net = require('net');
 var server = http.createServer(app);
 
+//proxyless
+var proxiless = require('../proxiless')();
+proxiless.startReporter('localhost', 3050);
+
+proxiless.setServerList([{port: 4050, host: 'localhost'}, {port: 5050, host: 'localhost'}]);
+proxiless.findHelp();
 /**
  * Listen on provided port, on all network interfaces.
  */
@@ -87,4 +93,5 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
+  console.log('server www1 started on port ' + addr.port);
 }

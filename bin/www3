@@ -8,6 +8,13 @@ var app = require('../app');
 var debug = require('debug')('node-load-balanced-sessions:server');
 var http = require('http');
 
+//proxyless
+var proxiless = require('../proxiless')();
+proxiless.startReporter('localhost', 5050);
+
+proxiless.setServerList([{port: 3050, host: 'localhost'}, {port: 4050, host: 'localhost'}]);
+proxiless.findHelp();
+
 /**
  * Get port from environment and store in Express.
  */
@@ -28,6 +35,13 @@ var server = http.createServer(app);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
+
+
+var net = require('net');
+
+
+
+
 
 /**
  * Normalize a port into a number, string, or false.
@@ -87,4 +101,5 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
+  console.log('server www3 started on port ' + addr.port);
 }
