@@ -21,11 +21,11 @@ app.set('port', port);
 
 var server = http.createServer(app);
 //proxyless
-var proxiless = require('../proxiless')(server, 5);
-proxiless.startReporter('localhost', 4050);
+var proxiless = require('../proxiless')(server);
+proxiless.startReporter('localhost', 4050, 5);
 
-proxiless.setServerList([{port: 3050, host: 'localhost'}, {port: 5050, host: 'localhost'}]);
-proxiless.findHelp();
+var serverList = [{port: 3050, host: 'localhost'}, {port: 5050, host: 'localhost'}];
+proxiless.findHelp(serverList);
 /**
  * Listen on provided port, on all network interfaces.
  */

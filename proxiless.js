@@ -8,21 +8,10 @@ var net = require('net');
 
 
 
-module.exports = function(hostServer, maxConnections){
+module.exports = function(hostServer){
   return{
-    //serverList: [],
-    addServer: function(srv){
-      //add validation
-      this.serverList.push(srv);
-    },
-    setServerList: function(sl){
-      //add validation
-      this.serverList = sl;
-    },
-    getServerList: function(){
-      return this.serverList;
-    },
-    startReporter: function(host, port){
+
+    startReporter: function(host, port, maxConnections){
       var status = 'true', reportStatus = net.createServer(function(cnt){
         cnt.on('data', function(data){
           console.log(data.toString())
@@ -30,7 +19,7 @@ module.exports = function(hostServer, maxConnections){
         hostServer.getConnections(function(err, count){
           if (err) return;
           console.log('connections: ' + count);
-          if(maxConnections < count) status = 'true';
+          if(maxConnections > count) status = 'true';
           else status = 'false';
           cnt.write(status);
         });
@@ -42,10 +31,10 @@ module.exports = function(hostServer, maxConnections){
 
       });
     },
-    findHelp: function findHelp(){
-      var len = this.serverList.length, count = 0;
+    findHelp: function findHelp(serverList){
+      var len = serverList.length, count = 0;
       for(count; count < len; count++){
-        this.checkLoad(this.serverList[count]);
+        this.checkLoad(serverList[count]);
       }
     },
     checkLoad: function checkLoad(srv){//take in a servers port and host, request its status and if true(meaning room for clients) return the connection else destroy the connection and return null
