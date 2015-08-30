@@ -22,7 +22,7 @@ var net = require('net');
 var server = http.createServer(app);
 
 //proxyless
-var proxiless = require('../proxiless')();
+var proxiless = require('../proxiless')(server, 5);
 proxiless.startReporter('localhost', 3050);
 
 proxiless.setServerList([{port: 4050, host: 'localhost'}, {port: 5050, host: 'localhost'}]);

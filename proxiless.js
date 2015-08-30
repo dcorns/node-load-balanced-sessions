@@ -8,9 +8,9 @@ var net = require('net');
 
 
 
-module.exports = function(){
+module.exports = function(hostServer, maxConnections){
   return{
-    serverList: [],
+    //serverList: [],
     addServer: function(srv){
       //add validation
       this.serverList.push(srv);
@@ -23,11 +23,18 @@ module.exports = function(){
       return this.serverList;
     },
     startReporter: function(host, port){
-      var reportStatus = net.createServer(function(cnt){
+      var status = 'true', reportStatus = net.createServer(function(cnt){
         cnt.on('data', function(data){
           console.log(data.toString())
         });
-        cnt.write('true');
+        hostServer.getConnections(function(err, count){
+          if (err) return;
+          console.log('connections: ' + count);
+          if(maxConnections < count) status = 'true';
+          else status = 'false';
+          cnt.write(status);
+        });
+
       });
 
       reportStatus.listen(port, host, function(){
