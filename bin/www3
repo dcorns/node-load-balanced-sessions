@@ -24,7 +24,7 @@ var server = http.createServer(app);
 //proxyless
 var proxiless = require('../proxiless')(server);
 var serverList = [{port: 3050, host: 'localhost'}, {port: 4050, host: 'localhost'}];
-proxiless.selfProxy('localhost', 5050, 2);
+proxiless.selfProxy('localhost', 5050, 2, serverList);
 
 /**
  * Listen on provided port, on all network interfaces.

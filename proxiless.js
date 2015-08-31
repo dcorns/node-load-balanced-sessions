@@ -11,14 +11,19 @@ module.exports = function(hostServer){
 
     selfProxy: function(host, port, maxConnections, serverList){
       hostServer.on('connection', function(){
-        console.log('check status');
+        console.log(host + ':' + port + ' checking status');
         hostServer.getConnections(function(err, count){
           if(err) return;
           console.log(count, maxConnections);
           if(count >= maxConnections){
             var len = serverList.length, c = 0;
+            var found = false;
             for(c; c < len; c++){
-              if(checkLoad(serverList[c])) return;
+              if(!(found)){
+                console.log(c);
+                checkLoad(serverList[c]);
+                found = true;
+              }
             }
           }
         });
@@ -26,12 +31,10 @@ module.exports = function(hostServer){
           var checkstatus = net.connect(srv, function(){
             checkstatus.write('checking on host ' + srv.host + ', port ' + srv.port);
           });
-
           checkstatus.on('error', function(){
             checkstatus.destroy();
             checkLoad(srv);
           });
-
           checkstatus.on('data', function(data){
             console.log(data.toString());
             if(!(data.toString() === 'true')){
