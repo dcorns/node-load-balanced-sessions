@@ -7,7 +7,6 @@
 var app = require('../app');
 var debug = require('debug')('node-load-balanced-sessions:server');
 var http = require('http');
-var net = require('net');
 /**
  * Get port from environment and store in Express.
  */
@@ -22,10 +21,10 @@ app.set('port', port);
 var server = http.createServer(app);
 //proxyless
 var proxiless = require('../proxiless')(server);
-proxiless.startReporter('localhost', 4050, 5);
-
 var serverList = [{port: 3050, host: 'localhost'}, {port: 5050, host: 'localhost'}];
-proxiless.findHelp(serverList);
+proxiless.selfProxy('localhost', 4050, 2, serverList);
+
+
 /**
  * Listen on provided port, on all network interfaces.
  */

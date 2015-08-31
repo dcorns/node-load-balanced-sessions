@@ -6,10 +6,59 @@
 'use strict';
 var net = require('net');
 
-
-
 module.exports = function(hostServer){
   return{
+
+    selfProxy: function(host, port, maxConnections, serverList){
+      hostServer.on('connection', function(){
+        console.log('check status');
+        hostServer.getConnections(function(err, count){
+          if(err) return;
+          console.log(count, maxConnections);
+          if(count >= maxConnections){
+            var len = serverList.length, c = 0;
+            for(c; c < len; c++){
+              if(checkLoad(serverList[c])) return;
+            }
+          }
+        });
+        function checkLoad(srv){//take in a servers port and host, request its status and if true(meaning room for clients) return the connection else destroy the connection and return null
+          var checkstatus = net.connect(srv, function(){
+            checkstatus.write('checking on host ' + srv.host + ', port ' + srv.port);
+          });
+
+          checkstatus.on('error', function(){
+            checkstatus.destroy();
+            checkLoad(srv);
+          });
+
+          checkstatus.on('data', function(data){
+            console.log(data.toString());
+            if(!(data.toString() === 'true')){
+              checkstatus.destroy();
+              return false;
+            }
+            else{
+              checkstatus.write('Thanks, Here is my stuff');
+              return true;
+            }
+
+          });
+        }
+      });
+      this.startReporter(host, port, maxConnections);
+    },
+
+    checkStatus: function(maxConnections, serverList){
+      console.log('check status');
+      hostServer.getConnections(function(err, count){
+        if(err) return;
+        console.log(count);
+        if(count === maxConnections){
+          this.findHelp(serverList);
+        }
+      });
+    },
 
     startReporter: function(host, port, maxConnections){
       var status = 'true', reportStatus = net.createServer(function(cnt){

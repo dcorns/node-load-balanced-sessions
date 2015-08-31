@@ -18,15 +18,15 @@ app.set('port', port);
 /**
  * Create HTTP server.
  */
-var net = require('net');
+
 var server = http.createServer(app);
 
 //proxyless
 var proxiless = require('../proxiless')(server);
-proxiless.startReporter('localhost', 3050, 5);
-
 var serverList = [{port: 4050, host: 'localhost'}, {port: 5050, host: 'localhost'}];
-proxiless.findHelp(serverList);
+
+proxiless.selfProxy('localhost', 3050, 1, serverList);
+
 /**
  * Listen on provided port, on all network interfaces.
  */
